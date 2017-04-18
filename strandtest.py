@@ -7,53 +7,59 @@ from dotstar import Adafruit_DotStar
 numpixels = 80 # Number of LEDs in strip
 
 # Here's how to control the strip from any two GPIO pins:
-datapin   = 23
-clockpin  = 27
+datapins = [23]
+clockpin = 27
+strips = []
 
-# Alternate ways of declaring strip:
-# strip   = Adafruit_DotStar(numpixels)           # Use SPI (pins 10=MOSI, 11=SCLK)
-# strip   = Adafruit_DotStar(numpixels, 32000000) # SPI @ ~32 MHz
-# strip   = Adafruit_DotStar()                    # SPI, No pixel buffer
-# strip   = Adafruit_DotStar(32000000)            # 32 MHz SPI, no pixel buf
-# See image-pov.py for explanation of no-pixel-buffer use.
-# Append "order='gbr'" to declaration for proper colors w/older DotStar strips)
-
-strip.begin()           # Initialize pins for output
-strip.setBrightness(255) # Limit brightness to ~1/4 duty cycle
-
-
-head  = 0               # Index of first 'on' pixel
-tail  = -10             # Index of last 'off' pixel
-color = 0        # 'On' color (starts red)
 colors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFF00FF, 0x00FFFF,
           0x2196f3, 0xFF5722, 0x009688, 0x673AB7, 0xE91E63, 0x7ff088]
 
+class LedStrip:
+    forward = True
+    numpixels = 80
+    head = 0
+    tail = -10
+    def random_color(self):
+        return random.choice(colors)
+    def __init__(self, datapin, clockpin):
+        self.datapin = datapin
+        self.clockpin = clockpin
+        self.strip = Adafruit_DotStar(self.numpixels, self.datapin, self.clockpin, order='bgr')
+        self.strip.begin()
+        self.strip.setBrightness(255)
+        self.color = self.random_color()
+    def step(self):
+        if self.forward:
+            if self.head < self.numpixels:
+                self.strip.setPixelColor(self.head, self.color) # Turn on 'head' pixel
+                self.strip.setPixelColor(self.tail, 0)     # Turn off 'tail'
+                self.strip.show()
+                self.head += 1
+                self.tail += 1
+                time.sleep(1.0 / 20)
+            else:
+                self.color = self.random_color()
+                self.head = 70
+                self.tail = 80
+                self.forward = False
+
+        else: # backwards
+            if self.head >= 0:
+                self.strip.setPixelColor(self.head, self.color) # Turn on 'head' pixel
+                self.strip.setPixelColor(self.tail, 0)     # Turn off 'tail'
+                self.strip.show()
+                self.head = self.head - 1
+                self.tail = self.tail - 1
+                time.sleep(1.0 / 20)
+            else:
+                self.head = 10
+                self.tail = 0
+                self.color = self.random_color()
+                self.forward = True
+
+for d in datapins:
+    print(d)
+    strips.append(LedStrip(d, clockpin))
 while True:
-    while head < numpixels:
-        strip.setPixelColor(head, colors[color]) # Turn on 'head' pixel
-        strip.setPixelColor(tail, 0)     # Turn off 'tail'
-        strip.show()                     # Refresh strip
-        time.sleep(1.0 / 20)             # Pause 20 milliseconds (~50 fps)
-        head += 1                        # Advance head position
-        tail += 1
-
-    head = 70
-    tail = 80
-
-    color +=1
-    if color == len(colors):
-        color = 0
-    while head >= 0:
-        strip.setPixelColor(head, colors[color]) # Turn on 'head' pixel
-        strip.setPixelColor(tail, 0)     # Turn off 'tail'
-        strip.show()                     # Refresh strip
-        time.sleep(1.0 / 20)             # Pause 20 milliseconds (~50 fps)
-        head = head - 1
-        tail = tail - 1
-
-    head = 10
-    tail = 0
-
-    color +=1
-    if color == len(colors):
-        color = 0
+    for s in strips:
+        s.step()
