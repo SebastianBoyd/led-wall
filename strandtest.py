@@ -7,7 +7,7 @@ from dotstar import Adafruit_DotStar
 numpixels = 80 # Number of LEDs in strip
 
 # Here's how to control the strip from any two GPIO pins:
-datapins = [23]
+datapins = [23, 17, 4, 18]
 clockpin = 27
 strips = []
 
@@ -33,10 +33,8 @@ class LedStrip:
             if self.head < self.numpixels:
                 self.strip.setPixelColor(self.head, self.color) # Turn on 'head' pixel
                 self.strip.setPixelColor(self.tail, 0)     # Turn off 'tail'
-                self.strip.show()
                 self.head += 1
                 self.tail += 1
-                time.sleep(1.0 / 20)
             else:
                 self.color = self.random_color()
                 self.head = 70
@@ -47,19 +45,21 @@ class LedStrip:
             if self.head >= 0:
                 self.strip.setPixelColor(self.head, self.color) # Turn on 'head' pixel
                 self.strip.setPixelColor(self.tail, 0)     # Turn off 'tail'
-                self.strip.show()
                 self.head = self.head - 1
                 self.tail = self.tail - 1
-                time.sleep(1.0 / 20)
             else:
                 self.head = 10
                 self.tail = 0
                 self.color = self.random_color()
                 self.forward = True
+    def render(self):
+        self.strip.show()
 
 for d in datapins:
-    print(d)
     strips.append(LedStrip(d, clockpin))
 while True:
     for s in strips:
         s.step()
+    time.sleep(1.0 / 10)
+    for s in strips:
+        s.render()
