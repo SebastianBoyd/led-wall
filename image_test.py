@@ -49,9 +49,10 @@ for i in range(len(pix)):
     x = i - y * size[0]
     if x % 2 == 0:
         strip = x / 2
-        num = 40 - 1 - y
+        num = 80 - 1 - y
     else:
         strip = (x - 1) / 2
         num = y
-
-    strips[strip].display_pixel(num, fromRGB(pix[1]))
+    strips[strip].display_pixel(num, fromRGB(pix[i]))
+for s in strips:
+    s.render()
