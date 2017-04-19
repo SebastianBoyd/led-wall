@@ -6,7 +6,7 @@ from dotstar import Adafruit_DotStar
 from PIL import Image
 import math
 
-datapins = [23, 17, 4, 18, 5, 25, 24, 22, 16, 13]
+datapins = [13, 16, 22, 24, 25, 5, 18, 4, 17, 23]
 clockpin = 27
 strips = []
 
@@ -32,7 +32,7 @@ class LedStrip:
         self.clockpin = clockpin
         self.strip = Adafruit_DotStar(self.numpixels, self.datapin, self.clockpin, order='bgr')
         self.strip.begin()
-        self.strip.setBrightness(255)
+        self.strip.setBrightness(100)
         self.color = self.random_color()
     def display_pixel(self, pos, color):
         self.strip.setPixelColor(pos, color)
@@ -49,10 +49,10 @@ for i in range(len(pix)):
     x = i - y * size[0]
     if x % 2 == 0:
         strip = x / 2
-        num = 80 - 1 - y
+        num = 40 - 1 - y
     else:
         strip = (x - 1) / 2
-        num = y
+        num = y + 40
     strips[strip].display_pixel(num, fromRGB(pix[i]))
 for s in strips:
     s.render()
