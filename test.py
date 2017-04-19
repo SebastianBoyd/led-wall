@@ -5,7 +5,7 @@ from dotstar import Adafruit_DotStar
 numpixels = 80 # Number of LEDs in strip
 
 # Here's how to control the strip from any two GPIO pins:
-datapins = [23, 17]
+datapins = [16, 13]
 clockpin = 27
 
 a = Adafruit_DotStar(numpixels, datapins[0], clockpin, order='bgr')
