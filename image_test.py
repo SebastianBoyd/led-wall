@@ -32,7 +32,7 @@ class LedStrip:
         self.clockpin = clockpin
         self.strip = Adafruit_DotStar(self.numpixels, self.datapin, self.clockpin, order='bgr')
         self.strip.begin()
-        self.strip.setBrightness(100)
+        self.strip.setBrightness(255)
         self.color = self.random_color()
     def display_pixel(self, pos, color):
         self.strip.setPixelColor(pos, color)
