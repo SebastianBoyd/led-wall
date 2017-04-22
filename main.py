@@ -58,7 +58,9 @@ class LedScreen:
         for s in self.strips:
             s.set_brightness(brightness)
         self.render()
-    def set_pixel(self, x, y, color):
+    def set_pixel(self, coordinates, color):
+        x = coordinates[0]
+        y = coordinates[1]
         if x % 2 == 0:
             strip = x / 2
             num = 40 - 1 - y
@@ -76,7 +78,12 @@ class LedScreen:
         for i in range(len(pix)):
             y = i / size[0]
             x = i - y * size[0]
-            self.set_pixel(x, y, fromRGB(pix[i]) )
+            self.set_pixel((x, y), fromRGB(pix[i]) )
+        self.render()
+    def clear(self):
+        for strip in range(10):
+            for led in range(80):
+                self.strips[strip].set_pixel(led, 0)
         self.render()
 
 def test():
@@ -87,4 +94,6 @@ def test():
         screen.display_image('boat.png')
         time.sleep(10)
 
-test()
+if __name__ == "__main__":
+    print('Testing...')
+    test()
