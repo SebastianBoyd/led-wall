@@ -47,7 +47,7 @@ class LedStrip:
 
 class LedScreen:
     strips = []
-    def __init__(self, datapins, clockpin, brightness=25):
+    def __init__(self, datapins=[13, 16, 22, 24, 25, 5, 18, 4, 17, 23], clockpin=27, brightness=25):
         self.datapins = datapins
         self.clockpin = clockpin
         self.brightnes = clamp(brightness, 0, 255)

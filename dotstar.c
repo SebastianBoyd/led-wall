@@ -661,6 +661,28 @@ static PyTypeObject DotStarObjectType = {
 	0,                           // tp_free
 };
 
+static int myextension_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int myextension_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "dotstar",
+        NULL,
+        sizeof(struct module_state),
+        methods,
+        NULL,
+        myextension_traverse,
+        myextension_clear,
+        NULL
+};
+
 PyMODINIT_FUNC initdotstar(void) { // Module initialization function
 	PyObject* m;
 
