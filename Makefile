@@ -1,22 +1,35 @@
-# The toplevel directory of the spixels project. In this case
-# this is one directory up, so ../
-# If you are using this as a template for your own project and
-# have checked out the spixels/ project as a submodule under
-# the spixels/ directory, then use SPIXELS_DIR=spixels
+
 SPIXELS_DIR=./spixels
 
 SPIXELS_LIBRARY=$(SPIXELS_DIR)/lib/libspixels.a
 
-LDFLAGS=-L$(SPIXELS_DIR)/lib -lspixels
-INCLUDE_FLAGS=-I$(SPIXELS_DIR)/include
+# Configure compiler and libraries:
+CXX = g++
+CXXFLAGS = -Wall -std=c++11 -O3 -I. -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host -I/opt/vc/include/interface/vmcs_host/linux -L/opt/vc/lib -I$(SPIXELS_DIR)/include
+LIBS = -lrt -lm -lpthread -lbcm_host -L$(SPIXELS_DIR)/lib
 
-CXXFLAGS=-Wall -O3 $(INCLUDE_FLAGS)
+# Makefile rules:
 
-strand : strand.cc $(SPIXELS_LIBRARY)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+capture-test : capture-test.cc
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 $(SPIXELS_LIBRARY):
 	$(MAKE)  -C $(SPIXELS_DIR)/lib
 
+rpi-fb-matrix: rpi-fb-matrix.o GridTransformer.o Config.o ./rpi-rgb-led-matrix/lib/librgbmatrix.a
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+
+display-test: display-test.o GridTransformer.o Config.o glcdfont.o ./rpi-rgb-led-matrix/lib/librgbmatrix.a
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+
+%.o: %.cpp $(DEPS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
+
+./rpi-rgb-led-matrix/lib/librgbmatrix.a:
+	$(MAKE) -C ./rpi-rgb-led-matrix/lib
+
+.PHONY: clean
+
 clean:
-	rm -f strand
+	rm -f *.o rpi-fb-matrix display-test
+	$(MAKE) -C ./rpi-rgb-led-matrix/lib clean
