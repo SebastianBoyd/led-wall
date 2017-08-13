@@ -5,10 +5,15 @@
  #include "led-strip.h"
  
  #include <unistd.h>  // for usleep()
+ #include <vector>
+
+ #include <typeinfo>
+ #include <iostream>
  
  #define FRAME_RATE 20
  
  using namespace spixels;
+ using namespace std;
  
  int main() {
      // If you are using WS2801, then you need CreateDMAMultiSPI() instead,
@@ -21,43 +26,30 @@
      // Choose the type of LEDs from the factory name.
      //
      // See include/led-strip.h
-     LEDStrip *strip1 = CreateAPA102Strip(spi, MultiSPI::SPI_P1, 80);
-     LEDStrip *strip2 = CreateAPA102Strip(spi, MultiSPI::SPI_P2, 80);
-     LEDStrip *strip3 = CreateAPA102Strip(spi, MultiSPI::SPI_P3, 80);
-     LEDStrip *strip4 = CreateAPA102Strip(spi, MultiSPI::SPI_P4, 80);
-     LEDStrip *strip5 = CreateAPA102Strip(spi, MultiSPI::SPI_P5, 80);
-     LEDStrip *strip6 = CreateAPA102Strip(spi, MultiSPI::SPI_P6, 80);
-     LEDStrip *strip7 = CreateAPA102Strip(spi, MultiSPI::SPI_P7, 80);
-     LEDStrip *strip8 = CreateAPA102Strip(spi, MultiSPI::SPI_P8, 80);
-     LEDStrip *strip9 = CreateAPA102Strip(spi, MultiSPI::SPI_P9, 80);
-     LEDStrip *strip10 = CreateAPA102Strip(spi, MultiSPI::SPI_P10, 80);
-     // ... register more strips here. They can be of different types
+
+     int pins[] = {13, 16, 22, 24, 25, 5, 18, 4, 17, 23};
+
+     LEDStrip *lights[10];
+     for (unsigned int i = 0; i < 10; ++i) {
+        lights[i] = CreateAPA102Strip(spi, pins[i], 80);
+     }
  
      for (unsigned int i = 0; /**/; ++i) {
-     const int pos = i % strip1->count();
-         strip1->SetPixel(pos, 0x000000);   // clear previous pixel.
-         strip2->SetPixel(pos, 0x000000);
+        const int pos = i % 80;
+
+         for (unsigned int j = 0; j < 10; ++j) {
+            lights[j]->SetPixel(pos, 0x000000);
+
+            lights[j]->SetPixel(pos+1, 255, 0, 0);
+            lights[j]->SetPixel(pos+2, 0, 255, 0);
+            lights[j]->SetPixel(pos+3, 0, 0, 255);
+         }
  
-         // Various ways to set pixels
- 
-         // Red Pixel, given as RGB hex value.
-         strip1->SetPixel(pos+1, 0xFF0000);
- 
-         // Alternative way: A Green pixel, given as RGB-color struct.
-         strip1->SetPixel(pos+2, RGBc(0, 255, 0));
- 
-         // Alternative way: give values as separate red/green/blue value.
-         strip1->SetPixel(pos+3, 0, 0, 255);
- 
-         // A Blue pixel on the second strip.
-         strip2->SetPixel(pos+1, 0, 0, 255);
      
          spi->SendBuffers();  // Send all pixels out at once.
          usleep(1000000 / FRAME_RATE);
      }
  
-     delete strip1;
-     delete strip2;
      delete spi;
  }
  

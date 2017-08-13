@@ -92,7 +92,7 @@ private:
 int main() {
     bcm_host_init();
     BCMDisplayCapture displayCapture(400, 800);
-    
+
 
 
     // Loop forever waiting for Ctrl-C signal to quit.
@@ -102,8 +102,8 @@ int main() {
       // Capture the current display image.
       displayCapture.capture();
       // Loop through the frame data and set the pixels on the matrix canvas.
-      for (int y=0; y<config.getDisplayHeight(); ++y) {
-        for (int x=0; x<config.getDisplayWidth(); ++x) {
+      for (int y=0; y<40; ++y) {
+        for (int x=0; x<20; ++x) {
           uint8_t red, green, blue;
           displayCapture.getPixel(x+x_offset, y+y_offset, &red, &green, &blue);
           canvas->SetPixel(x, y, red, green, blue);

@@ -13,20 +13,12 @@ LIBS = -lrt -lm -lpthread -lbcm_host -L$(SPIXELS_DIR)/lib
 capture-test : capture-test.cc
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
+strand : strand.cc $(SPIXELS_LIBRARY)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+
 $(SPIXELS_LIBRARY):
 	$(MAKE)  -C $(SPIXELS_DIR)/lib
 
-rpi-fb-matrix: rpi-fb-matrix.o GridTransformer.o Config.o ./rpi-rgb-led-matrix/lib/librgbmatrix.a
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
-
-display-test: display-test.o GridTransformer.o Config.o glcdfont.o ./rpi-rgb-led-matrix/lib/librgbmatrix.a
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
-
-%.o: %.cpp $(DEPS)
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
-
-./rpi-rgb-led-matrix/lib/librgbmatrix.a:
-	$(MAKE) -C ./rpi-rgb-led-matrix/lib
 
 .PHONY: clean
 
