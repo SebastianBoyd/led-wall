@@ -16,6 +16,9 @@ capture-test : capture-test.cc
 strand : strand.cc $(SPIXELS_LIBRARY)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
+pixel-test : pixel_test.cc $(SPIXELS_LIBRARY)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+
 $(SPIXELS_LIBRARY):
 	$(MAKE)  -C $(SPIXELS_DIR)/lib
 

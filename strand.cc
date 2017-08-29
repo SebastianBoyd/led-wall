@@ -33,7 +33,7 @@
      for (unsigned int i = 0; i < 10; ++i) {
         lights[i] = CreateAPA102Strip(spi, pins[i], 80);
      }
- 
+
      for (unsigned int i = 0; /**/; ++i) {
         const int pos = i % 80;
 
