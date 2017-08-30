@@ -1,19 +1,21 @@
-""" bounce.py 
-    bounce on screen boundary contact
-    only change is in ball.checkBounds.
-"""
+DEBUG = True
 
 import pygame
-import main
+
 import os, sys
 os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+if not DEBUG:
+    import main
+    ledScreen = main.LedScreen(brightness=255)
+
 def fromRGB(rgb):
     red = rgb[0]
     green = rgb[1]
     blue = rgb[2]
     rgb = (red<<16) + (green<<8) + blue
     return rgb
-ledScreen = main.LedScreen(brightness=255)
+
 
 #pygame.init()
 
@@ -82,7 +84,8 @@ def main():
         pixels = pygame.surfarray.pixels3d(copy)
         for x, col in enumerate(pixels):
             for y, color in enumerate(col):
-                ledScreen.set_pixel((x, y), fromRGB(color))
+                if not DEBUG:
+                    ledScreen.set_pixel((x, y), fromRGB(color))
                 pass
         ledScreen.render()
         # del pixels
