@@ -1,9 +1,9 @@
-DEBUG = True
+DEBUG = False
 
 import pygame
 
 import os, sys
-os.environ["SDL_VIDEODRIVER"] = "dummy"
+#os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 if not DEBUG:
     import main
@@ -16,8 +16,13 @@ def fromRGB(rgb):
     rgb = (red<<16) + (green<<8) + blue
     return rgb
 
+PINK = (255, 0, 255)
 
-#pygame.init()
+def drawSquare(background, x, y):
+    #Random cell colour
+    #colour = random.randint(0,255), random.randint(0,255), random.randint(0,255)
+    colour = PINK
+    pygame.draw.circle(background, colour, (x, y), 4)
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self, screen, background):
@@ -76,7 +81,9 @@ def main():
                 
         allSprites.clear(screen, background)
         allSprites.update()
-        allSprites.draw(screen)\
+        allSprites.draw(screen)
+
+        drawSquare(background, 10, 10)
 
         pygame.display.flip()
 
@@ -87,7 +94,8 @@ def main():
                 if not DEBUG:
                     ledScreen.set_pixel((x, y), fromRGB(color))
                 pass
-        ledScreen.render()
+        if not DEBUG:
+            ledScreen.render()
         # del pixels
         # del copy
 

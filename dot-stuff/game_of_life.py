@@ -1,8 +1,8 @@
 DEBUG = True
 
 import pygame, copy, math, random, os, sys
-os.environ["SDL_VIDEODRIVER"] = "dummy"
-pygame.init()
+#os.environ["SDL_VIDEODRIVER"] = "dummy"
+pygame.display.init()
 
 PIXEL_SIZE = 1
 WIN_WIDTH = 20
@@ -22,6 +22,8 @@ def fromRGB(rgb):
     blue = rgb[2]
     rgb = (red<<16) + (green<<8) + blue
     return rgb
+
+BLUE = (0, 0, 255)
 
 class Grid():
     def __init__(self, *args, **kwargs):
@@ -54,7 +56,8 @@ class Grid():
  
 def drawSquare(background, x, y):
     #Random cell colour
-    colour = random.randint(0,255), random.randint(0,255), random.randint(0,255)
+    #colour = random.randint(0,255), random.randint(0,255), random.randint(0,255)
+    colour = BLUE
     pygame.draw.rect(background, colour, (x * PIXEL_SIZE, y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE))       
 
 def randomize(grid, background):
@@ -91,8 +94,9 @@ def main():
         newgrid = Grid()
 
         if pygame.time.get_ticks() - final > REFRESH * 100:
-            randomize(grid, background)
-        elif pygame.time.get_ticks() - final > REFRESH:
+            #randomize(grid, background)
+            pass
+        if pygame.time.get_ticks() - final > REFRESH:
             numActive = 0
             background.fill((0, 0, 0))
 
