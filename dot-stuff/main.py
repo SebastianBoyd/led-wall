@@ -20,8 +20,19 @@ def fromRGB(rgb):
     rgb = (red<<16) + (green<<8) + blue
     return rgb
 
+def toRGB(hex_code):
+    blue =  hex_code & 255
+    green = (hex_code >> 8) & 255
+    red =   (hex_code >> 16) & 255
+    return red, green, blue
+
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
+
+# Calculate gamma correction table, makes mid-range colors look 'right':
+gamma = bytearray(256)
+for i in range(256):
+	gamma[i] = int(pow(float(i) / 255.0, 2.7) * 255.0 + 0.5)
 
 class LedStrip:
     forward = True
@@ -38,7 +49,8 @@ class LedStrip:
         self.set_brightness(brightness)
         self.color = self.random_color()
     def set_pixel(self, pos, color):
-        self.strip.setPixelColor(pos, color)
+        r, g, b = toRGB(color)
+        self.strip.setPixelColor(pos, gamma[r], gamma[g], gamma[b])
     def set_brightness(self, brightness):
         self.brightness = clamp(brightness, 0, 255)
         self.strip.setBrightness(self.brightness)
